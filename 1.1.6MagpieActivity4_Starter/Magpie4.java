@@ -36,6 +36,32 @@ public class Magpie4
 			response = "Say something, please.";
 		}
 
+    else if (findKeyword(statement, "how are you") >= 0)
+    {
+      response = "I am good. Now lets talk about you.";
+    }
+    else if (findKeyword(statement, "Hello") >= 0
+            || findKeyword(statement, "Hi") >= 0)
+    {
+      response = "How are you feeling?";
+    }
+    else if (findKeyword(statement, "okay") >= 0
+            || findKeyword(statement, "ok") >= 0)
+    {
+      response = "Great!";
+    }
+    else if (findKeyword(statement, "your welcome") >= 0)
+    {
+      response = "Thank you!";
+    }
+    else if (findKeyword(statement, "good night") >= 0)
+    {
+      response = "good night!";
+    }
+    else if (findKeyword(statement, "good morning") >= 0)
+    {
+      response = "good morning!";
+    }
 		else if (findKeyword(statement, "no") >= 0)
 		{
 			response = "Why so negative?";
@@ -102,16 +128,15 @@ public class Magpie4
     {
       response = "That's okay, lets talk about something else then. Is there something else that has been worrying you?";
     }
-    else if (findKeyword(statement, "Hello") >= 0
-            || findKeyword(statement, "Hi") >= 0)
-    {
-      response = "How are you feeling?";
-    }
     else if (findKeyword(statement, "fail") >= 0
             || findKeyword(statement, "failing") >= 0
             || findKeyword(statement, "failed") >= 0)
     {
       response = "It's okay, you cannot succeed at something without first failing. Keep trying, you will eventually succeed.";
+    }
+    else if (findKeyword(statement, "insecure") >= 0)
+    {
+      response = "Everyone has flaws. But everyone has strengths too. Recognize both of these in you. ";
     }
 		else if (findKeyword(statement, "I want to", 0) >= 0)
 		{
@@ -130,7 +155,7 @@ public class Magpie4
 			}
 			else
 			{
-				response = getRandomResponse();
+				response = getRandomResponse(statement);
 			}
 		}
 		return response;
@@ -158,7 +183,38 @@ public class Magpie4
 		return "What would it mean to " + restOfStatement + "?";
 	}
 
-	
+
+/**
+  * Takes a sentence such as "I like space" to "What do you mean by space"
+*/
+  	private String transformForClarification(String statement)
+	{
+    String restOfStatement = "";
+		//  Remove the final period, if there is one
+		statement = statement.trim();
+		String lastChar = statement.substring(statement
+				.length() - 1);
+		if (lastChar.equals("."))
+		{
+			statement = statement.substring(0, statement
+					.length() - 1);
+		}
+    if (findKeyword(statement, "I like") >= 0){
+      int psn = findKeyword (statement, "I like", 0);
+		  restOfStatement = statement.substring(psn + 6).trim();
+      //System.out.println("ONE: " + restOfStatement);
+    }
+    else if (findKeyword(statement, "I don't like") >= 0){
+      int psn = findKeyword (statement, "I don't like", 0);
+		  restOfStatement = statement.substring(psn + 12).trim();
+    }
+    else if (findKeyword(statement, "How do you") >= 0)
+    {
+      int psn = findKeyword (statement, "How do you", 0);
+		  restOfStatement = statement.substring(psn + 10).trim();
+    }
+		return "What do you mean by " + restOfStatement + "?";
+	}
 	
 	/**
 	 * Take a statement with "you <something> me" and transform it into 
@@ -252,14 +308,17 @@ public class Magpie4
 	 * Pick a default response to use if nothing else fits.
 	 * @return a non-committal string
 	 */
-	private String getRandomResponse()
+	private String getRandomResponse(String statement)
 	{
 		final int NUMBER_OF_RESPONSES = 5;
 		double r = Math.random();
 		int whichResponse = (int)(r * NUMBER_OF_RESPONSES);
 		String response = "";
 		
-		if (whichResponse == 0)
+		if (findKeyword(statement, "I like") >= 0 || findKeyword(statement, "I don't like") >= 0 || findKeyword(statement, "How do you") >= 0){
+      response = transformForClarification(statement);
+    }
+    else if (whichResponse == 0)
 		{
 			response = "Interesting, tell me more.";
 		}
