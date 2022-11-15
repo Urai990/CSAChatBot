@@ -190,6 +190,9 @@ public class Magpie4
       case HiHello:
         response = "Hello, how are you?";
         break;
+      case love:
+          response = "Tell me about your love life. ";
+          break;
       case Ok:
         response = "Great!";
         break;
