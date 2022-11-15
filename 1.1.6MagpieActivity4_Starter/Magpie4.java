@@ -6,18 +6,158 @@
  *</li><li>
  * 		Will transform statements as well as react to keywords
  *</li></ul>
- * @author Laurie White
- * @version April 2012
+ * @author Uttara Rai, Maya Poghosyan
+ * @version Novemeber 2022
  *
  */
 public class Magpie4
 {
+  public enum State {
+    None, Random, HiHello, Howareyou, Talk, Ok, Thank, Morning, Night, No, Family, Love, Breakup, Anxiety, Excited, HimHer, Test, Event, Meeting, Thanks, Fail, Insecure, YouMe, Welcome, DoNotKnow, Want
+  }
+  
+  private State state = State.None;
+
+  private State parseInput(String statement)
+  {
+		if (statement.length() == 0) {
+      return State.None;
+    }
+    
+    if (findKeyword(statement, "Hello") >= 0 
+        || findKeyword(statement, "Hi") >= 0){
+          return State.HiHello;
+    }
+    if ( findKeyword(statement, "Good morning") >= 0) {
+      return State.Morning;
+    }
+    if (findKeyword(statement, "Good night") >= 0) {
+      return State.Night;
+    }
+      
+    if (findKeyword(statement, "girlfreind") >= 0
+      || findKeyword(statement, "boyfreind") >= 0) {
+        return State.Love;
+     }
+
+    if (findKeyword(statement, "how are you") >= 0) {
+      return State.Howareyou;
+    }
+    
+    else if (findKeyword(statement, "okay") >= 0
+            || findKeyword(statement, "ok") >= 0)
+    {
+      return State.Ok;
+    }
+    else if (findKeyword(statement, "thank you") >= 0
+      || findKeyword(statement, "thanks") >= 0
+      || findKeyword(statement, "thx") >= 0){
+      return State.Thank;
+    }
+    else if (findKeyword(statement, "talk") >= 0
+      || findKeyword(statement, "something") >= 0){
+      return State.Talk;
+      }
+    else if (findKeyword(statement, "yourWelcome") >= 0){
+      return State.Welcome;
+    }
+    else if (findKeyword(statement, "no") >= 0){
+      return State.No;
+	}
+    else if (findKeyword(statement, "your welcome") >= 0){
+      return State.Welcome;
+	}
+    else if (findKeyword(statement, "mother") >= 0
+				|| findKeyword(statement, "father") >= 0
+				|| findKeyword(statement, "sister") >= 0
+				|| findKeyword(statement, "brother") >= 0)
+		{
+			return State.Family;
+		}
+    else if (findKeyword(statement,"breakup")>=0
+      || findKeyword(statement,"broke up")>= 0
+      || findKeyword(statement,"split")>=0)
+    {
+      return State.Breakup;
+    }
+    else if (findKeyword(statement,"anxiety") >= 0
+        || findKeyword(statement,"worried") >= 0
+        || findKeyword(statement,"anxious") >= 0
+        || findKeyword(statement,"nervous") >= 0)
+    {
+      return State.Anxiety;
+    }
+    else if (findKeyword(statement,"excited") >= 0
+        || findKeyword(statement,"happy") >= 0
+        || findKeyword(statement,"enjoy") >= 0
+        || findKeyword(statement,"great") >= 0)
+    {
+      return State.Excited;
+    }
+    else if (findKeyword(statement,"it's her") >= 0
+        || findKeyword(statement,"was her fault") >= 0
+        || findKeyword(statement,"her fault") >= 0
+        || findKeyword(statement,"not me") >= 0
+        || findKeyword(statement,"his fault") >= 0
+        || findKeyword(statement,"it's him") >= 0){
+      return State.HimHer;
+    }
+     else if (findKeyword(statement,"test") >= 0
+        || findKeyword(statement,"assignment") >= 0)
+    {
+      return State.Test;
+    }
+     else if (findKeyword(statement,"event") >= 0
+        || findKeyword(statement,"wedding") >= 0
+        || findKeyword(statement,"prepare") >= 0
+        || findKeyword(statement,"trip") >= 0
+        || findKeyword(statement,"pack") >= 0)
+    {
+      return State.Event;
+    }
+    else if (findKeyword(statement,"meeting") >= 0
+        || findKeyword(statement,"interview") >= 0
+        || findKeyword(statement,"coordinate") >= 0
+        || findKeyword(statement,"presentation") >= 0)
+    {
+      return State.Meeting;
+    }
+    else if (findKeyword(statement, "I don't know") >= 0
+            || findKeyword(statement, "I do not know") >= 0)
+    {
+      return State.DoNotKnow;
+    }
+    else if (findKeyword(statement, "fail") >= 0
+            || findKeyword(statement, "failing") >= 0
+            || findKeyword(statement, "failed") >= 0)
+    {
+      return State.Fail;
+    }
+    else if (findKeyword(statement, "insecure") >= 0)
+    {
+      return State.Insecure;
+    }
+    else if (findKeyword(statement, "I want to", 0) >= 0)
+		{
+	    return State.Want;
+		}
+    else if (findKeyword(statement, "You", 0) >= 0
+             || findKeyword(statement, "Me", 0) >= 0)
+		{
+	    return State.YouMe;
+		}
+    else {
+    return State.Random;
+    }
+  }
+  
 	/**
 	 * Get a default greeting 	
 	 * @return a greeting
 	 */	
 	public String getGreeting()
 	{
+		state = State.None;
 		return "Hello, let's talk.";
 	}
 	
@@ -30,136 +170,97 @@ public class Magpie4
 	 */
 	public String getResponse(String statement)
 	{
-		String response = "";
-		if (statement.length() == 0)
-		{
-			response = "Say something, please.";
-		}
+    String response = "";
+    State newState = parseInput(statement);
 
-    else if (findKeyword(statement, "how are you") >= 0)
+    switch (newState) 
     {
-      response = "I am good. Now lets talk about you.";
+      case None:
+        response = "Say something, please.";
+        break;
+      case Morning:
+        response = "Good morning! How is your day going?";
+        break;
+      case Night:
+        response = "Good night! How was your day?";
+        break;
+      case Howareyou:
+        response = "I am good. Now lets talk about you.";
+        break;
+      case HiHello:
+        response = "Hello, how are you?";
+        break;
+      case Ok:
+        response = "Great!";
+        break;
+      case Thank:
+        response = "You are very welcome!";
+        break;
+      case Talk:
+        response = "Lets talk about you. How are you feeling today?";
+        break;
+      case Welcome:
+        response = "Thank you!";
+        break;
+      case No:
+        response = "Why so negative?";
+        break;
+      case Family:
+        response = "Tell me more about your family.";
+        break;
+      case Breakup:
+         response = "Introspection is important. Was it you or them? How do you feel like the relationship went wrong?";
+        break;
+      case Anxiety:
+        response = "Let's unpack and reset.. What's worrying you?";
+        break;
+      case Excited:
+        response = "That's awesome! I'm very happy for you! Lets talk more about that.";
+       break;
+      case HimHer:
+        response = "I'm sorry that happened to you. There are plenty of fish in the sea.";
+        break;
+      case Test:
+        response = "Things proven to help with memorization: chewing gum, color-coding, and listening to classical music. Start working today and use active recall.";
+        break;
+      case Event:
+        response = "Delineate your tasks! Put together a to-do list and ask people for help in things you'll need to bring and put together.";
+        break;
+      case Meeting:
+        response = "Practice in front of a mirror, make sure you're not anxious, and look your best Let the best of your character shine through.";
+        break;
+      case DoNotKnow:
+        response = "That's okay, lets talk about something else then. Is there something else that has been worrying you?";
+        break;
+      case Fail:
+        response = "It's okay, you cannot succeed at something without first failing. Keep trying, you will eventually succeed.";
+        break;
+      case Insecure:
+        response = "Everyone has flaws. But everyone has strengths too. Recognize both of these in you. ";
+      // Responses which require transformations
+      case Want:
+        response = transformIWantToStatement(statement);
+        break;
+      case YouMe:
+        // Look for a two word (you <something> me)
+		  	// pattern
+			  int psn = findKeyword(statement, "you", 0);
+  
+	  		if (psn >= 0
+		  			&& findKeyword(statement, "me", psn) >= 0)
+			  {
+				  response = transformYouMeStatement(statement);
+			  }
+      //Random Response
+      default:
+          response = getRandomResponse(statement);
+        break;
     }
-    else if (findKeyword(statement, "Hello") >= 0
-            || findKeyword(statement, "Hi") >= 0)
-    {
-      response = "How are you feeling?";
+    state = newState;
+    return response;
+    
     }
-    else if (findKeyword(statement, "okay") >= 0
-            || findKeyword(statement, "ok") >= 0)
-    {
-      response = "Great!";
-    }
-    else if (findKeyword(statement, "your welcome") >= 0)
-    {
-      response = "Thank you!";
-    }
-    else if (findKeyword(statement, "good night") >= 0)
-    {
-      response = "good night!";
-    }
-    else if (findKeyword(statement, "good morning") >= 0)
-    {
-      response = "good morning!";
-    }
-		else if (findKeyword(statement, "no") >= 0)
-		{
-			response = "Why so negative?";
-		}
-		else if (findKeyword(statement, "mother") >= 0
-				|| findKeyword(statement, "father") >= 0
-				|| findKeyword(statement, "sister") >= 0
-				|| findKeyword(statement, "brother") >= 0)
-		{
-			response = "Tell me more about your family.";
-		}
-    else if (findKeyword(statement,"boyfriend") >= 0
-        || findKeyword(statement,"girlfriend") >= 0)
-    {
-      response = "Tell me about your love life.";
-    }
-    else if (findKeyword(statement,"breakup")>=0
-      || findKeyword(statement,"broke up")>= 0
-      || findKeyword(statement,"split")>=0) {
-        response = "Introspection is important. Was it you or them? How do you feel like the relationship went wrong?";
-      }
-    else if (findKeyword(statement,"anxiety") >= 0
-        || findKeyword(statement,"worried") >= 0
-        || findKeyword(statement,"anxious") >= 0
-        || findKeyword(statement,"nervous") >= 0) {
-      response = "Let's unpack and reset.. What's worrying you?";
-    }
-    else if (findKeyword(statement,"it's her") >= 0
-        || findKeyword(statement,"was her fault") >= 0
-        || findKeyword(statement,"her fault") >= 0
-        || findKeyword(statement,"not me") >= 0
-        || findKeyword(statement,"his fault") >= 0
-        || findKeyword(statement,"it's him") >= 0){
-      response = "I'm sorry that happened to you. There are plenty of fish in the sea.";
-    }
-    else if (findKeyword(statement,"test") >= 0
-        || findKeyword(statement,"assignment") >= 0)
-
-    {
-      response = "Things proven to help with memorization: chewing gum, color-coding, and listening to classical music. Start working today and use active recall.";
-    }
-    else if (findKeyword(statement,"event") >= 0
-        || findKeyword(statement,"wedding") >= 0
-        || findKeyword(statement,"prepare") >= 0
-        || findKeyword(statement,"trip") >= 0
-        || findKeyword(statement,"pack") >= 0) {
-      response = "Delineate your tasks! Put together a to-do list and ask people for help in things you'll need to bring and put together.";
-    }
-
-		// Responses which require transformations
-    else if (findKeyword(statement,"meeting") >= 0
-        || findKeyword(statement,"interview") >= 0
-        || findKeyword(statement,"coordinate") >= 0
-        || findKeyword(statement,"presentation") >= 0){
-      response = "Practice in front of a mirror, make sure you're not anxious, and look your best Let the best of your character shine through.";
-        }
-    else if (findKeyword(statement,"thanks") >= 0
-        || findKeyword(statement,"thank you") >= 0
-        || findKeyword(statement, "thx") >= 0) {
-      response = "You're very welcome.";
-        }
-    else if (findKeyword(statement, "I don't know") >= 0
-            || findKeyword(statement, "I do not know") >= 0)
-    {
-      response = "That's okay, lets talk about something else then. Is there something else that has been worrying you?";
-    }
-    else if (findKeyword(statement, "fail") >= 0
-            || findKeyword(statement, "failing") >= 0
-            || findKeyword(statement, "failed") >= 0)
-    {
-      response = "It's okay, you cannot succeed at something without first failing. Keep trying, you will eventually succeed.";
-    }
-    else if (findKeyword(statement, "insecure") >= 0)
-    {
-      response = "Everyone has flaws. But everyone has strengths too. Recognize both of these in you. ";
-    }
-		else if (findKeyword(statement, "I want to", 0) >= 0)
-		{
-			response = transformIWantToStatement(statement);
-		}
-		else
-		{
-			// Look for a two word (you <something> me)
-			// pattern
-			int psn = findKeyword(statement, "you", 0);
-
-			if (psn >= 0
-					&& findKeyword(statement, "me", psn) >= 0)
-			{
-				response = transformYouMeStatement(statement);
-			}
-			else
-			{
-				response = getRandomResponse(statement);
-			}
-		}
-		return response;
-	}
+	
 	
 	/**
 	 * Take a statement with "I want to <something>." and transform it into 
@@ -310,7 +411,7 @@ public class Magpie4
 	 */
 	private String getRandomResponse(String statement)
 	{
-		final int NUMBER_OF_RESPONSES = 5;
+		final int NUMBER_OF_RESPONSES = 7;
 		double r = Math.random();
 		int whichResponse = (int)(r * NUMBER_OF_RESPONSES);
 		String response = "";
@@ -328,7 +429,7 @@ public class Magpie4
 		}
 		else if (whichResponse == 2)
 		{
-			response = "Do you really think so?";
+			response = "Do you really think so? Why do you feel that way?";
 		}
 		else if (whichResponse == 3)
 		{
@@ -338,10 +439,19 @@ public class Magpie4
 		{
 			response = "What do you mean by that?";
 		}
+    else if (whichResponse == 5)
+		{
+			response = "How are you feeling";
+		}
+    else if (whichResponse == 6)
+		{
+			response = "How is your day going?";
+		}
 		return response;
 	}
-
 }
+          
+
 
 
 
